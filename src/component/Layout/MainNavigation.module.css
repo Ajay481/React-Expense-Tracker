@@ -1,0 +1,18 @@
+.head {
+    background-color: yellow;
+    color: black;
+}
+
+.header {
+    display: flex;
+    top: 0;
+    left: 0;
+    align-items: center;
+    margin-left: 3rem;
+    margin-right: 40rem;
+    justify-content: space-between;
+}
+
+.header h1 {
+    color: indianred;
+}
