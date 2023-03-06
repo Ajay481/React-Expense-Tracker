@@ -1,9 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { AuthContext } from "../store/AuthContext";
 import classes from "./Auth.module.css";
 
 export const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const authCtx = useContext(AuthContext)
 
   const history = useHistory();
 
@@ -53,7 +55,8 @@ export const Auth = () => {
           }
         })
         .then((data) => {
-          console.log(data);
+          console.log(data)
+          authCtx.login(data.idToken)
           history.replace("/home");
         })
         .catch((err) => alert(err.message));

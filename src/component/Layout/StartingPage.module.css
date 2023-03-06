@@ -1,7 +1,16 @@
 .welcome {
-    background-color: aqua;
-    width: 50%;
-    margin: auto;
-    text-align: center;
-    font-size: xx-large;
+  display: flex;
+  width: 50%;
+  margin: auto;
+  text-align: center;
+  justify-content: space-between;
+}
+.welcome span {
+  background-color: rgb(240, 220, 194);
+  margin-left: 145px;
+}
+.welcome button {
+  color: blue;
+  border: none;
+  background-color: rgb(240, 220, 194);
 }

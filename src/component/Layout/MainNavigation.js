@@ -9,6 +9,7 @@ export const MainNavigation = () => {
         <h1>MyWebBlog</h1>
         <NavLink to="/home">Home</NavLink>
         <h3>Products</h3>
+        <NavLink to="/profile">Profile</NavLink>
         <h3>About Us</h3>
       </header>
     </div>
