@@ -6,10 +6,12 @@ import { ForgotPassword } from "./component/Pages/ForgotPassword";
 import { Home } from "./component/Pages/Home";
 import { Profile } from "./component/Pages/Profile";
 import { AuthContext } from "./component/store/AuthContext";
+import { ExpenseContext } from "./component/store/ExpenseContext";
 
 function App() {
   const authCtx = useContext(AuthContext);
   const [token, setToken] = useState(false);
+  const [expenses, setExpenses] = useState([]);
 
   const userIsLoggedIn = !!token;
 
@@ -31,22 +33,24 @@ function App() {
   };
   return (
     <AuthContext.Provider value={contextValue}>
-      <Layout>
-        <Switch>
-          <Route path="/home" exact>
-            <Home />
-          </Route>
-          <Route path="/profile" exact>
-            <Profile />
-          </Route>
-          {!authCtx.isLoggedIn && (
-            <Route path="/forgotpassword" exact>
-              <ForgotPassword />
+      <ExpenseContext.Provider value={{ expenses, setExpenses }}>
+        <Layout>
+          <Switch>
+            <Route path="/home" exact>
+              <Home />
             </Route>
-          )}
-          <Auth />
-        </Switch>
-      </Layout>
+            <Route path="/profile" exact>
+              <Profile />
+            </Route>
+            {!authCtx.isLoggedIn && (
+              <Route path="/forgotpassword" exact>
+                <ForgotPassword />
+              </Route>
+            )}
+            <Auth />
+          </Switch>
+        </Layout>
+      </ExpenseContext.Provider>
     </AuthContext.Provider>
   );
 }

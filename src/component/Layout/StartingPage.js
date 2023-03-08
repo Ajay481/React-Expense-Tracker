@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { useHistory } from "react-router";
 import { AuthContext } from "../store/AuthContext";
+import { Screen } from "../features/Screen";
 
 import classes from "./StartingPage.module.css";
 
@@ -51,6 +52,7 @@ export const StartingPage = () => {
       <div className={classes.btn}>
         <button onClick={verifyHandler}>VERIFY EMAIL ID</button>
       </div>
+      <Screen />
     </div>
   );
 };
