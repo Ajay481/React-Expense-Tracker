@@ -1,11 +1,11 @@
 import React, { useContext, useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, NavLink } from "react-router-dom";
 import { AuthContext } from "../store/AuthContext";
 import classes from "./Auth.module.css";
 
 export const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const authCtx = useContext(AuthContext)
+  const authCtx = useContext(AuthContext);
 
   const history = useHistory();
 
@@ -55,8 +55,8 @@ export const Auth = () => {
           }
         })
         .then((data) => {
-          console.log(data)
-          authCtx.login(data.idToken)
+          console.log(data);
+          authCtx.login(data.idToken);
           history.replace("/home");
         })
         .catch((err) => alert(err.message));
@@ -108,6 +108,11 @@ export const Auth = () => {
           <button onClick={submitHandler}>
             {isLogin ? "Login" : "Sign Up"}
           </button>
+        </div>
+        <div>
+          {isLogin ? (
+            <NavLink to="/forgotpassword">Forgot Password</NavLink>
+          ) : null}
         </div>
       </div>
       <div>
