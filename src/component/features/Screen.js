@@ -3,4 +3,4 @@ import { List } from "./List";
 
 export const Screen = () => {
   return <List />;
-};
+}
