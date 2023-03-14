@@ -2,12 +2,13 @@ import React, { useContext, useEffect, useState } from "react";
 import { ExpenseContext } from "../store/ExpenseContext";
 import classes from "./Form.module.css";
 
-export const Form = () => {
+export const Form = (props) => {
   const [expense, setExpense] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("Food");
 
   const expenseCtx = useContext(ExpenseContext);
+  console.log(props.prevExpense);
 
   const expenseHandler = (e) => {
     setExpense(e.target.value);
@@ -20,7 +21,7 @@ export const Form = () => {
   };
   const getApiHandler = () => {
     fetch(
-      `https://crudcrud.com/api/3f386f3ba9b2444fb77bd739335eee9f/expenses`,
+      "https://react-https-c449c-default-rtdb.asia-southeast1.firebasedatabase.app//expenses.json",
       {
         method: "GET",
         headers: {
@@ -33,25 +34,42 @@ export const Form = () => {
           return res.json();
         } else {
           return res.json().then((data) => {
-            let errorMessage = "Authentication Failed";
-            throw new Error(errorMessage);
+            if (data && data.error && data.error.message) {
+              let errorMessage = data.error.message;
+              throw new Error(errorMessage);
+            }
           });
         }
       })
       .then((data) => {
         console.log(data);
-        expenseCtx.setExpenses(data);
+        const finalData = [];
+        const objKeys = Object.keys(data === null ? {} : data);
+        objKeys.forEach((keys) => {
+          const objElement = data[keys];
+          objElement.id = keys;
+          finalData.push(objElement);
+        });
+        expenseCtx.setExpenses(finalData);
       })
       .catch((err) => alert(err.message));
   };
   useEffect(() => {
-    getApiHandler()
+    getApiHandler();
   }, []);
+
+  useEffect(() => {
+    if (Object.keys(props.prevExpense).length > 0) {
+      setExpense(props.prevExpense.expense);
+      setDescription(props.prevExpense.description);
+      setCategory(props.prevExpense.category);
+    }
+  }, [props.prevExpense]);
 
   const submitHandler = (e) => {
     e.preventDefault();
     fetch(
-      `https://crudcrud.com/api/3f386f3ba9b2444fb77bd739335eee9f/expenses`,
+      "https://react-https-c449c-default-rtdb.asia-southeast1.firebasedatabase.app/expenses.json",
       {
         method: "POST",
         body: JSON.stringify({
@@ -69,19 +87,63 @@ export const Form = () => {
           return res.json();
         } else {
           return res.json().then((data) => {
-            let errorMessage = "Authentication Failed";
-            throw new Error(errorMessage);
+            if (data && data.error && data.error.message) {
+              let errorMessage = data.error.message;
+              throw new Error(errorMessage);
+            }
           });
         }
       })
       .then((data) => {
         console.log(data);
-        getApiHandler()
+        getApiHandler();
       })
       .catch((err) => alert(err.message));
-    };
+    setExpense("");
+    setDescription("");
+    setCategory("");
+  };
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    fetch(
+      `https://react-https-c449c-default-rtdb.asia-southeast1.firebasedatabase.app/expenses/${props.prevExpense.id}.json`,
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          expense,
+          description,
+          category,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((data) => {
+            if (data && data.error && data.error.message) {
+              let errorMessage = data.error.message;
+              throw new Error(errorMessage);
+            }
+          });
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        getApiHandler();
+      })
+      .catch((err) => alert(err.message));
+  };
+
   return (
-    <form className={classes.form} onSubmit={submitHandler}>
+    <form
+      className={classes.form}
+      onSubmit={props.prevExpense ? updateHandler : submitHandler}
+    >
       <label>EXPENSE:</label>
       <div>
         <input
