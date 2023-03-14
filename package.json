@@ -11,6 +11,7 @@
     "react-loader-spinner": "^5.3.4",
     "react-router-dom": "^5.3.4",
     "react-scripts": "5.0.1",
+    "redux": "^4.2.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -36,5 +37,19 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ajay481/React-Expense-Tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ajay481/React-Expense-Tracker/issues"
+  },
+  "homepage": "https://github.com/Ajay481/React-Expense-Tracker#readme"
 }
