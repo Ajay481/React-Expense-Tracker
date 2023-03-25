@@ -1,79 +1,37 @@
-import React, { useContext, useEffect, useRef } from "react";
-import { AuthContext } from "../store/AuthContext";
+import React, { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProfile } from "../ReduxStore/AuthSlice";
+import { updateProfile } from "../ReduxStore/AuthSlice";
 import classes from "./Profile.module.css";
 
 export const Profile = () => {
-  const authCtx = useContext(AuthContext);
-
+  const auth = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const nameInputRef = useRef("");
   const urlInputRef = useRef("");
 
   useEffect(() => {
-    fetch(
-      "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBlvwm2UFysqlxp549MzHN_mTVXIn57d7s",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          idToken: authCtx.token,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          return res.json().then((data) => {
-            let errMsg = "Authentication Failed";
-            throw new Error(errMsg);
-          });
-        }
-      })
-      .then((data) => {
-        nameInputRef.current.value = data.users[0].displayName;
-        urlInputRef.current.value = data.users[0].photoUrl;
-      })
-      .catch((err) => alert(err.message));
-  }, []);
+    if (auth.photoUrl && auth.displayName) {
+      nameInputRef.current.value = auth.displayName;
+      urlInputRef.current.value = auth.photoUrl;
+    } else {
+      dispatch(fetchProfile({ idToken: auth.token }));
+    }
+  }, [auth.displayName, auth.photoUrl]);
 
   const updateHandler = (e) => {
     e.preventDefault();
 
     const enteredName = nameInputRef.current.value;
     const enteredUrl = urlInputRef.current.value;
-    console.log(authCtx.token);
 
-    fetch(
-      "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyBlvwm2UFysqlxp549MzHN_mTVXIn57d7s",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          displayName: enteredName,
-          photoUrl: enteredUrl,
-          returnSecureToken: true,
-          idToken: authCtx.token,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          return res.json().then((data) => {
-            let errorMessage = "Authentication Failed";
-            throw new Error(errorMessage);
-          });
-        }
+    dispatch(
+      updateProfile({
+        displayName: enteredName,
+        photoUrl: enteredUrl,
+        idToken: auth.token,
       })
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => alert(err.message));
+    );
   };
   return (
     <div className={classes.profile}>

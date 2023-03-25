@@ -1,15 +1,22 @@
-import React, { useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useHistory } from "react-router-dom";
-import { AuthContext } from "../store/AuthContext";
 import classes from "./MainNavigation.module.css";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { authActions } from "../ReduxStore/AuthSlice";
 
 export const MainNavigation = () => {
   const history = useHistory();
-  const authCtx = useContext(AuthContext);
-  const isLoggedIn = authCtx.isLoggedIn;
+  const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    localStorage.getItem("token") ? setIsLoggedIn(true) : setIsLoggedIn(false);
+  }, [auth.token]);
 
   const logoutHandler = () => {
-    authCtx.logout();
+    dispatch(authActions.logout());
     history.replace("/");
   };
   return (

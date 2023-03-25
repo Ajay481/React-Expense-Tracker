@@ -1,40 +1,18 @@
-import { useContext } from "react";
-import { useHistory } from "react-router";
-import { AuthContext } from "../store/AuthContext";
+import { verifyEmail } from "../ReduxStore/AuthSlice";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { Screen } from "../features/Screen";
 
 import classes from "./StartingPage.module.css";
 
 export const StartingPage = () => {
-  const authCtx = useContext(AuthContext);
   const history = useHistory();
+  const auth = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const verifyHandler = () => {
-    fetch(
-      "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBlvwm2UFysqlxp549MzHN_mTVXIn57d7s",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          requestType: "VERIFY_EMAIL",
-          idToken: authCtx.token,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          return res.json().then((data) => {
-            let errMessage = "Authentication Failed";
-            throw new Error(errMessage);
-          });
-        }
-      })
-      .then((data) => console.log(data))
-      .catch((err) => alert(err.message));
+    dispatch(verifyEmail({ requestType: "VERIFY_EMAIL", idToken: auth.token }));
   };
 
   const profileHandler = () => {

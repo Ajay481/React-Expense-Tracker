@@ -1,14 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ExpenseContext } from "../store/ExpenseContext";
+import React, { useEffect, useState } from "react";
 import classes from "./Form.module.css";
+import { useDispatch } from "react-redux";
+import { expenseList } from "../ReduxStore/ExpenseSlice";
+import { addExpenseList } from "../ReduxStore/ExpenseSlice";
+import { updateExpenseList } from "../ReduxStore/ExpenseSlice";
 
 export const Form = (props) => {
   const [expense, setExpense] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Food");
+  const dispatch = useDispatch();
 
-  const expenseCtx = useContext(ExpenseContext);
-  console.log(props.prevExpense);
+  console.log(props);
 
   const expenseHandler = (e) => {
     setExpense(e.target.value);
@@ -19,43 +22,9 @@ export const Form = (props) => {
   const categoryHandler = (e) => {
     setCategory(e.target.value);
   };
-  const getApiHandler = () => {
-    fetch(
-      "https://react-https-c449c-default-rtdb.asia-southeast1.firebasedatabase.app//expenses.json",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          return res.json().then((data) => {
-            if (data && data.error && data.error.message) {
-              let errorMessage = data.error.message;
-              throw new Error(errorMessage);
-            }
-          });
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        const finalData = [];
-        const objKeys = Object.keys(data === null ? {} : data);
-        objKeys.forEach((keys) => {
-          const objElement = data[keys];
-          objElement.id = keys;
-          finalData.push(objElement);
-        });
-        expenseCtx.setExpenses(finalData);
-      })
-      .catch((err) => alert(err.message));
-  };
+
   useEffect(() => {
-    getApiHandler();
+    dispatch(expenseList());
   }, []);
 
   useEffect(() => {
@@ -68,37 +37,9 @@ export const Form = (props) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    fetch(
-      "https://react-https-c449c-default-rtdb.asia-southeast1.firebasedatabase.app/expenses.json",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          expense,
-          description,
-          category,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          return res.json().then((data) => {
-            if (data && data.error && data.error.message) {
-              let errorMessage = data.error.message;
-              throw new Error(errorMessage);
-            }
-          });
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        getApiHandler();
-      })
-      .catch((err) => alert(err.message));
+    dispatch(
+      addExpenseList({ expense, description, category, dispatch, expenseList })
+    );
     setExpense("");
     setDescription("");
     setCategory("");
@@ -106,43 +47,30 @@ export const Form = (props) => {
 
   const updateHandler = (e) => {
     e.preventDefault();
-    fetch(
-      `https://react-https-c449c-default-rtdb.asia-southeast1.firebasedatabase.app/expenses/${props.prevExpense.id}.json`,
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          expense,
-          description,
-          category,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          return res.json().then((data) => {
-            if (data && data.error && data.error.message) {
-              let errorMessage = data.error.message;
-              throw new Error(errorMessage);
-            }
-          });
-        }
+    dispatch(
+      updateExpenseList({
+        id: props.prevExpense.id,
+        expense,
+        description,
+        category,
+        dispatch,
+        expenseList,
       })
-      .then((data) => {
-        console.log(data);
-        getApiHandler();
-      })
-      .catch((err) => alert(err.message));
+    );
+    setExpense("");
+    setDescription("");
+    setCategory("");
+    props?.editState();
   };
 
   return (
     <form
       className={classes.form}
-      onSubmit={props.prevExpense ? updateHandler : submitHandler}
+      onSubmit={
+        Object.keys(props.prevExpense).length > 0
+          ? updateHandler
+          : submitHandler
+      }
     >
       <label>EXPENSE:</label>
       <div>
@@ -167,11 +95,11 @@ export const Form = (props) => {
       <label>CATEGORY:</label>
       <select name="category" onChange={categoryHandler} value={category}>
         <option>Food</option>
-        <option>Petrol</option>
+        <option>Fuel</option>
         <option>Travelling</option>
         <option>Movie</option>
       </select>
       <button>Submit</button>
     </form>
   );
-}
+};
