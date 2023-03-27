@@ -1,9 +1,15 @@
 import React from "react";
 import { MainNavigation } from "./MainNavigation";
+import { useSelector } from "react-redux";
 
 export const Layout = (props) => {
-    return (<div>
-        <MainNavigation/>
-        <main>{props.children}</main>
-    </div>)
-}
+  const isDark = useSelector((state) => state.theme.isDark);
+  return (
+    <div
+      style={{ backgroundColor: isDark ? "black" : "white", height: "100vh" }}
+    >
+      <MainNavigation />
+      <main>{props.children}</main>
+    </div>
+  );
+};

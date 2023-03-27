@@ -10,6 +10,8 @@ export const Profile = () => {
   const nameInputRef = useRef("");
   const urlInputRef = useRef("");
 
+  const isDark = useSelector((state) => state.theme.isDark);
+
   useEffect(() => {
     if (auth.photoUrl && auth.displayName) {
       nameInputRef.current.value = auth.displayName;
@@ -34,7 +36,7 @@ export const Profile = () => {
     );
   };
   return (
-    <div className={classes.profile}>
+    <div className={isDark ? classes.profileDark : classes.profileLight}>
       <div className={classes.contact}>
         <div>Contact Details</div>
         <button>Cancel</button>

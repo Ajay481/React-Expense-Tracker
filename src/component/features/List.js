@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import classes from "./List.module.css";
 import { Card } from "../Card/Card";
 import { Form } from "./Form";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,7 +20,7 @@ export const List = () => {
   };
 
   return (
-    <div className={classes.list}>
+    <div>
       <Form prevExpense={edit} editState={() => setEdit({})} />
       {expenses?.expenseList?.map((item) => (
         <div key={item.id}>
@@ -35,7 +34,6 @@ export const List = () => {
           />
         </div>
       ))}
-      {expenses.showPremeium ? <button>Premeium</button> : null}
     </div>
   );
 };
