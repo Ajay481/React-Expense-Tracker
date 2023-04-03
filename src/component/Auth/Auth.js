@@ -11,6 +11,7 @@ export const Auth = () => {
 
   const auth = useSelector((state) => state.auth);
 
+
   useEffect(() => {
     if (auth.token) {
       history.replace("/home");
@@ -61,6 +62,7 @@ export const Auth = () => {
           <label>Email</label>
         </div>
         <input
+          data-testid="email"
           type="email"
           id="email"
           placeholder="Enter Email"
@@ -71,6 +73,7 @@ export const Auth = () => {
           <label>Password</label>
         </div>
         <input
+          data-testid="password"
           type="password"
           id="password"
           placeholder="Enter Password"
@@ -81,6 +84,7 @@ export const Auth = () => {
           <label>Confirm Password</label>
         </div>
         <input
+          data-testid="confirmPassword"
           type="password"
           id="confirmpassword"
           placeholder="Confirm Password"
@@ -88,7 +92,7 @@ export const Auth = () => {
           required
         />
         <div>
-          <button onClick={submitHandler}>
+          <button data-testid="submit" onClick={submitHandler}>
             {isLogin ? "Login" : "Sign Up"}
           </button>
         </div>
