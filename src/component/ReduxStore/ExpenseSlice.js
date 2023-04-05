@@ -1,20 +1,20 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const Base_URL =
-  "https://react-https-c449c-default-rtdb.asia-southeast1.firebasedatabase.app/expenses.json";
-
 export const addExpenseList = createAsyncThunk(
   "users/expensePost",
   async (param, { rejectWithValue }) => {
     try {
-      const response = await axios.post(Base_URL, {
-        expense: param.expense,
-        description: param.description,
-        category: param.category,
-      });
+      const response = await axios.post(
+        `https://react-ecommerce-14f24-default-rtdb.firebaseio.com/expenses/${param.userId}.json`,
+        {
+          expense: param.expense,
+          description: param.description,
+          category: param.category,
+        }
+      );
       console.log(response.data);
-      param.dispatch(param.expenseList());
+      param.dispatch(param.expenseList(param.userId));
     } catch (error) {
       alert("Expense List fetched unsuccessful");
       return error;
@@ -22,33 +22,39 @@ export const addExpenseList = createAsyncThunk(
   }
 );
 
-export const expenseList = createAsyncThunk("users/expense", async () => {
-  try {
-    const response = await axios.get(Base_URL);
-    console.log(response.data);
-    const finalData = [];
-    const objKeys = Object.keys(response.data === null ? {} : response.data);
-    objKeys.forEach((keys) => {
-      const objElement = response.data[keys];
-      objElement.id = keys;
-      finalData.push(objElement);
-    });
-    return finalData;
-  } catch (error) {
-    alert("Expense List fetched unsuccessful");
-    return error;
+export const expenseList = createAsyncThunk(
+  "users/expense",
+  async (newEmailId) => {
+    try {
+      const response = await axios.get(
+        `https://react-ecommerce-14f24-default-rtdb.firebaseio.com/expenses/${newEmailId}.json`
+      );
+      console.log(response.data);
+      const finalData = [];
+      const objKeys = Object.keys(response.data === null ? {} : response.data);
+      objKeys.forEach((keys) => {
+        const objElement = response.data[keys];
+        objElement.id = keys;
+        finalData.push(objElement);
+      });
+      return finalData;
+    } catch (error) {
+      alert("Expense List fetched unsuccessful");
+      return error;
+    }
   }
-});
+);
 
 export const deleteExpenseList = createAsyncThunk(
   "users/expenseDelete",
   async (param, { rejectWithValue }) => {
+    console.log(param);
     try {
       const response = await axios.delete(
-        `https://react-https-c449c-default-rtdb.asia-southeast1.firebasedatabase.app/expenses/${param.id}.json`
+        `https://react-ecommerce-14f24-default-rtdb.firebaseio.com/expenses/${param.userId}/${param.id}.json`
       );
       console.log(response.data);
-      param.dispatch(param.expenseList());
+      param.dispatch(param.expenseList(param.userId));
     } catch (error) {
       alert("Expense List fetched unsuccessful");
       return error;
@@ -61,7 +67,7 @@ export const updateExpenseList = createAsyncThunk(
   async (param, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `https://react-https-c449c-default-rtdb.asia-southeast1.firebasedatabase.app/expenses/${param.id}.json`,
+        `https://react-ecommerce-14f24-default-rtdb.firebaseio.com/expenses/${param.userId}/${param.id}.json`,
         {
           expense: param.expense,
           description: param.description,
@@ -69,7 +75,7 @@ export const updateExpenseList = createAsyncThunk(
         }
       );
       console.log(response.data);
-      param.dispatch(param.expenseList());
+      param.dispatch(param.expenseList(param.userId));
     } catch (error) {
       alert("Expense List fetched unsuccessful");
       return error;

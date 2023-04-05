@@ -8,6 +8,9 @@ import { expenseList } from "../ReduxStore/ExpenseSlice";
 export const List = () => {
   const [edit, setEdit] = useState({});
   const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
+  const a = auth?.userId?.replace("@", "");
+  const newEmailId = a?.replace(".", "");
   const expenses = useSelector((state) => state.expense);
 
   const editForm = (id) => {
@@ -16,7 +19,9 @@ export const List = () => {
   };
 
   const deleteForm = (id) => {
-    dispatch(deleteExpenseList({ id, dispatch, expenseList }));
+    dispatch(
+      deleteExpenseList({ id: id, dispatch, expenseList, userId: newEmailId })
+    );
   };
 
   return (

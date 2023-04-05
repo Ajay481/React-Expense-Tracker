@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import classes from "./Form.module.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { expenseList } from "../ReduxStore/ExpenseSlice";
 import { addExpenseList } from "../ReduxStore/ExpenseSlice";
 import { updateExpenseList } from "../ReduxStore/ExpenseSlice";
@@ -10,8 +10,9 @@ export const Form = (props) => {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Food");
   const dispatch = useDispatch();
-
-  console.log(props);
+  const auth = useSelector((state) => state.auth);
+  const a = auth?.userId?.replace("@", "");
+  const newEmailId = a?.replace(".", "");
 
   const expenseHandler = (e) => {
     setExpense(e.target.value);
@@ -24,7 +25,7 @@ export const Form = (props) => {
   };
 
   useEffect(() => {
-    dispatch(expenseList());
+    dispatch(expenseList(newEmailId));
   }, []);
 
   useEffect(() => {
@@ -38,11 +39,18 @@ export const Form = (props) => {
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(
-      addExpenseList({ expense, description, category, dispatch, expenseList })
+      addExpenseList({
+        expense,
+        description,
+        category,
+        dispatch,
+        expenseList,
+        userId: newEmailId,
+      })
     );
     setExpense("");
     setDescription("");
-    setCategory("");
+    setCategory("Food");
   };
 
   const updateHandler = (e) => {
@@ -55,6 +63,7 @@ export const Form = (props) => {
         category,
         dispatch,
         expenseList,
+        userId: newEmailId,
       })
     );
     setExpense("");
